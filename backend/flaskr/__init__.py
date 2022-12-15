@@ -7,22 +7,40 @@ import random
 from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
+def paginate_questions(request, selection):
+    page = request.args.get('page', 1, type=int)
+    start= (page-1) * QUESTIONS_PER_PAGE
+    end = start + QUESTIONS_PER_PAGE
+    
+    question = [question.format() for question in selection]
+    current_questions = question[start:end]
+
+    return current_questions
 
 def create_app(test_config=None):
     # create and configure the app
-    app = Flask(__name__)
+    app = Flask(__name__, instance_relative_config=True)
     setup_db(app)
 
-   
 
     """
     @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
     """
     
+    CORS(app, resources={r"/localhost/*": {"origins": "*"}})
+
+
     """
     @TODO: Use the after_request decorator to set Access-Control-Allow
     """
-
+    @app.after_request
+    def after_request(response):
+        response.headers.add(
+            "Access-Control-Allow-Headers", "Content-Type,Authorization,true")
+        response.headers.add(
+            "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE")
+        return response
+    
     """
     @TODO:
     Create an endpoint to handle GET requests
@@ -35,6 +53,25 @@ def create_app(test_config=None):
             'mensaje': 'funciona'
         })
 
+    @app.route('/questions', methods=['GET'])
+    def list_questions():
+
+        questions= Question.query.all()
+        all_questions = paginate_questions(request, questions)
+       
+        categories = Category.query.all()
+        all_categories = [category.format() for category in categories]
+        
+
+        
+        return jsonify({
+            'success': True,
+            'totalQuestions': len(all_questions),
+            'questions': all_questions,
+            'current_category': all_categories,
+            'categories': all_categories
+            
+        })
 
     """
     @TODO:

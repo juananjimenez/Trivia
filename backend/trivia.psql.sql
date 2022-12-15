@@ -124,8 +124,8 @@ COPY public.categories (id, type) FROM stdin;
 --
 
 COPY public.questions (id, question, answer, difficulty, category) FROM stdin;
-5	Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?	Maya Angelou	2	4
-9	What boxer's original name is Cassius Clay?	Muhammad Ali	1	4
+5	Whose autobiography is entitled "I Know Why the Caged Bird Sings"?	Maya Angelou	2	4
+9	What boxers original name is Cassius Clay?	Muhammad Ali	1	4
 2	What movie earned Tom Hanks his third straight Oscar nomination, in 1996?	Apollo 13	4	5
 4	What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?	Tom Cruise	4	5
 6	What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?	Edward Scissorhands	3	5

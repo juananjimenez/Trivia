@@ -1,0 +1,23 @@
+DOCUMENTATION
+
+UDACITRIVIA
+
+This is a project to let Udacity employers has a great internal cometition leisure tool.
+The code is written under the Pep-8 principles.
+
+GETTING STARTED
+
+The stack of the application is Flask for the backend and React for the frontend. The 
+database is Postgresql. The project was developed internally so the url is refering a 
+localhost owned by Udacity.
+
+
+API REFERENCE
+
+DEPLOYEMENT
+
+AUTHORS 
+
+ACKNOWLEDGEMENT
+
+
