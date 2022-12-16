@@ -60,13 +60,12 @@ def create_app(test_config=None):
         all_questions = paginate_questions(request, questions)
        
         categories = Category.query.all()
-        all_categories = [category.format() for category in categories]
-        
+        #all_categories = [category.format() for category in categories]
+        all_categories = {category.id: category.type for category in categories}
 
-        
         return jsonify({
             'success': True,
-            'totalQuestions': len(all_questions),
+            'total_questions': len(questions),
             'questions': all_questions,
             'current_category': all_categories,
             'categories': all_categories
@@ -85,6 +84,20 @@ def create_app(test_config=None):
     ten questions per page and pagination at the bottom of the screen for three pages.
     Clicking on the page numbers should update the questions.
     """
+
+    @app.route('/questions/<int:question_id>', methods=['DELETE'])
+    def delete_question(question_id):
+        question = Question.query.filter(Question.id == question_id).one_or_none()
+
+        if question is None:
+            abort(400)
+        else:
+            question.delete()
+            return jsonify({
+                'success': True,
+                'deleted': question_id
+            })
+
 
     """
     @TODO:
