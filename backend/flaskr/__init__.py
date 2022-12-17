@@ -48,15 +48,10 @@ def create_app(test_config=None):
     """
     
     @app.route('/')
-    def home():
-        return jsonify({
-            'mensaje': 'funciona'
-        })
-
     @app.route('/questions', methods=['GET'])
     def list_questions():
 
-        questions= Question.query.all()
+        questions= Question.query.order_by('id').all()
         all_questions = paginate_questions(request, questions)
        
         categories = Category.query.all()
@@ -73,7 +68,7 @@ def create_app(test_config=None):
         })
 
     """
-    @TODO:
+    @TODO: (HECHO)
     Create an endpoint to handle GET requests for questions,
     including pagination (every 10 questions).
     This endpoint should return a list of questions,
@@ -100,12 +95,38 @@ def create_app(test_config=None):
 
 
     """
-    @TODO:
+    @TODO: (HECHO)
     Create an endpoint to DELETE question using a question ID.
 
     TEST: When you click the trash icon next to a question, the question will be removed.
     This removal will persist in the database and when you refresh the page.
     """
+
+    @app.route('/add', methods=['POST'])
+    def add_question():
+        body = request.get_json()
+
+        new_question = body.get('question', None)
+        new_answer = body.get('answer', None)
+        new_category = body.get('category', None)
+        new_difficulty = body.get('difficulty', None)
+
+        try:
+            new_question = Question(
+                question = new_question, 
+                answer = new_answer, 
+                category = new_category, 
+                difficulty = new_difficulty)
+
+            new_question.insert()
+
+            return jsonify({
+                'success': True,
+                'created': add_question.id
+                })
+        except:
+            abort(422)
+
 
     """
     @TODO:
