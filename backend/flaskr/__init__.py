@@ -24,14 +24,14 @@ def create_app(test_config=None):
 
 
     """
-    @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
+    @TODO (HECHO): Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
     """
     
     CORS(app, resources={r"/localhost/*": {"origins": "*"}})
 
 
     """
-    @TODO: Use the after_request decorator to set Access-Control-Allow
+    @TODO (HECHO): Use the after_request decorator to set Access-Control-Allow
     """
     @app.after_request
     def after_request(response):
@@ -41,12 +41,7 @@ def create_app(test_config=None):
             "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE")
         return response
     
-    """
-    @TODO:
-    Create an endpoint to handle GET requests
-    for all available categories.
-    """
-    
+        
     @app.route('/')
     @app.route('/questions', methods=['GET'])
     def list_questions():
@@ -78,6 +73,24 @@ def create_app(test_config=None):
     you should see questions and categories generated,
     ten questions per page and pagination at the bottom of the screen for three pages.
     Clicking on the page numbers should update the questions.
+    """
+
+    @app.route('/categories', methods=['GET'])
+    def list_categories():
+        categories = Category.query.all()
+        #all_categories = [category.format() for category in categories]
+        all_categories = {category.id: category.type for category in categories}
+
+        return jsonify({
+            'success': True,
+            'categories': all_categories
+        })
+
+
+    """
+    @TODO(HECHO):
+    Create an endpoint to handle GET requests
+    for all available categories.
     """
 
     @app.route('/questions/<int:question_id>', methods=['DELETE'])
@@ -122,7 +135,7 @@ def create_app(test_config=None):
 
             return jsonify({
                 'success': True,
-                'created': add_question.id
+                'created': add_question.id,
                 })
         except:
             abort(422)
