@@ -135,14 +135,14 @@ def create_app(test_config=None):
 
             return jsonify({
                 'success': True,
-                'created': add_question.id,
+            
                 })
         except:
             abort(422)
 
 
     """
-    @TODO:
+    @TODO (HECHO):
     Create an endpoint to POST a new question,
     which will require the question and answer text,
     category, and difficulty score.
@@ -152,8 +152,40 @@ def create_app(test_config=None):
     of the questions list in the "List" tab.
     """
 
+    @app.route('/questions', methods=['POST'])
+    def search_word():
+        
+        body = request.get_json()
+
+        searchTerm = body['searchTerm']
+    
+        questions = Question.query.filter(Question.question.ilike('%' + searchTerm + '%')).all()
+
+        #print (questions)
+
+        results = []
+        for question in questions:
+            results.append(
+            {
+                'question': question.question,
+                'answer': question.answer,
+                'difficulty': question.difficulty,
+                'category': question.category
+            }
+            )
+        #print (data)
+        #print(len(data))
+        
+        return jsonify({
+        'success': True,
+        'questions':results,
+        'totalQuestions': len(results),
+        'current_category': results
+        })
+
+
     """
-    @TODO:
+    @TODO (HECHO):
     Create a POST endpoint to get questions based on a search term.
     It should return any questions for whom the search term
     is a substring of the question.
@@ -162,6 +194,8 @@ def create_app(test_config=None):
     only question that include that string within their question.
     Try using the word "title" to start.
     """
+
+
 
     """
     @TODO:
@@ -183,7 +217,37 @@ def create_app(test_config=None):
     one question at a time is displayed, the user is allowed to answer
     and shown whether they were correct or not.
     """
+    @app.errorhandler(400)
+    def bad_request(error):
+        return jsonify({
+            'success': False,
+            'error': 400,
+            'message': "Bad request"
+        }) , 400
 
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({
+            'success': False,
+            'error': 404,
+            'message': "Not found"
+        }), 404
+
+    @app.errorhandler(422)
+    def unprocessable(error):
+        return jsonify({
+            'success': False,
+            'error': 422,
+            'message': "Unprocessable"
+        })
+    
+    @app.errorhandler(405)
+    def not_found(error):
+        return jsonify({
+            'success': False,
+            'error': 405,
+            'message': "Method not allowed"
+        })
     """
     @TODO:
     Create error handlers for all expected errors
