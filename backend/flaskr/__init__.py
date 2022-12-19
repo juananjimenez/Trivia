@@ -195,6 +195,30 @@ def create_app(test_config=None):
     Try using the word "title" to start.
     """
 
+    @app.route('/categories/<int:category_id>/questions', methods=['GET'])
+    def question_by_category(category_id):
+
+        search_category = Question.query.filter(Question.category == category_id).all()
+
+        #print(search_category)
+
+        results = []
+        for question in search_category:
+            results.append(
+            {
+                'question': question.question,
+                'answer': question.answer,
+                'difficulty': question.difficulty,
+                'category': question.category
+            }
+            )
+
+        return jsonify({
+        'success': True,
+        'questions': results,
+        'totalQuestions': len(results),
+        'currentCategory': results
+        })
 
 
     """
