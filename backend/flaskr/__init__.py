@@ -217,7 +217,7 @@ def create_app(test_config=None):
         'success': True,
         'questions': results,
         'totalQuestions': len(results),
-        'currentCategory': results
+        'currentCategory': None
         })
 
 
@@ -229,6 +229,9 @@ def create_app(test_config=None):
     categories in the left column will cause only questions of that
     category to be shown.
     """
+    #@app.route('/play', methods=['POST'])
+    #def question_play():
+
 
     """
     @TODO:
@@ -241,6 +244,7 @@ def create_app(test_config=None):
     one question at a time is displayed, the user is allowed to answer
     and shown whether they were correct or not.
     """
+
     @app.errorhandler(400)
     def bad_request(error):
         return jsonify({
@@ -256,6 +260,14 @@ def create_app(test_config=None):
             'error': 404,
             'message': "Not found"
         }), 404
+    
+    @app.errorhandler(405)
+    def not_found(error):
+        return jsonify({
+            'success': False,
+            'error': 405,
+            'message': "Method not allowed"
+        })
 
     @app.errorhandler(422)
     def unprocessable(error):
@@ -265,13 +277,7 @@ def create_app(test_config=None):
             'message': "Unprocessable"
         })
     
-    @app.errorhandler(405)
-    def not_found(error):
-        return jsonify({
-            'success': False,
-            'error': 405,
-            'message': "Method not allowed"
-        })
+    
     """
     @TODO:
     Create error handlers for all expected errors

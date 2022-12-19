@@ -53,7 +53,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['categories'])
 
     def test_delete_questions(self):
-        res = self.client().delete('/questions/35')
+        res = self.client().delete('/questions/39')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -70,6 +70,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['category'])
         self.assertTrue(data['difficulty'])
 
+    def test_405_method_not_allowed(self):
+        res = self.client().post('/add', json={'question': '¿Where did you born?', 'answer': 'Madrid', 'category': 2, 'difficulty': 3})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Method not allowed')
+
     def test_search_question(self):
         res = self.client().post('/questions')
         data = json.loads(res.data)
@@ -79,7 +87,44 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['questions'])
         self.assertTrue(data['totalQuestions'])
         self.assertTrue(data['current_category'])
+    
+    def test_question_category(self):
+        res = self.client().get('/categories/3/questions')
+        data = json.loads(res.data)
 
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['questions'])
+        self.assertTrue(data['totalQuestions'])
+    
+    def test_400_bad_request(self):
+        res = self.client().get('/questions')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Bad request')
+
+    def test_404_not_found(self):
+        res = self.client().get('/questions')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Not found')
+    
+
+    def test_422_unprocessable(self):
+        res = self.client().delete('/questions/39')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Unprocessable')
+
+     
+
+        
        
 
 # Make the tests conveniently executable
