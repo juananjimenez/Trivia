@@ -244,6 +244,7 @@ def create_app(test_config=None):
 
         print(body)
         print(quiz_category)
+        print(body['quiz_category'])
         
 
         questions=[]
@@ -252,18 +253,18 @@ def create_app(test_config=None):
 
         print(questions)
         print(random.choice(questions))
-        previousQuestions = random.choice(questions)
-        print(previousQuestions['question'])
-        print(previousQuestions['answer'])
+        currentQuestion = random.choice(questions)
+        print(currentQuestion['question'])
+        print(currentQuestion['answer'])
         
 
 
         return jsonify({
             'success': True,
-            'quizQategory': quiz_category,
-            'currentQuestion': previousQuestions,
-            'previousQuestions': previousQuestions['question'],
-            'answer': previousQuestions['answer']
+            'quizCategory': body['quiz_category'],
+            'currentQuestion': currentQuestion,
+            'previousQuestions': questions,
+            #'answer': currentQuestion
         })
 
 
