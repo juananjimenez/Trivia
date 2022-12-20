@@ -50,7 +50,7 @@ def create_app(test_config=None):
         all_questions = paginate_questions(request, questions)
        
         categories = Category.query.all()
-        #all_categories = [category.format() for category in categories]
+        
         all_categories = {category.id: category.type for category in categories}
 
         return jsonify({
@@ -78,7 +78,7 @@ def create_app(test_config=None):
     @app.route('/categories', methods=['GET'])
     def list_categories():
         categories = Category.query.all()
-        #all_categories = [category.format() for category in categories]
+        
         all_categories = {category.id: category.type for category in categories}
 
         if categories is None:
@@ -142,7 +142,6 @@ def create_app(test_config=None):
             })
     
 
-
     """
     @TODO (HECHO):
     Create an endpoint to POST a new question,
@@ -158,13 +157,10 @@ def create_app(test_config=None):
     def search_word():
         
         body = request.get_json()
-
         searchTerm = body['searchTerm']
-    
         questions = Question.query.filter(Question.question.ilike('%' + searchTerm + '%')).all()
-
-        #print (questions)
-
+       
+        #create the questions from the db consult
         results = []
         for question in questions:
             results.append(
@@ -175,8 +171,6 @@ def create_app(test_config=None):
                 'category': question.category
             }
             )
-        #print (data)
-        #print(len(data))
         
         return jsonify({
         'success': True,
@@ -204,8 +198,7 @@ def create_app(test_config=None):
 
             search_category = Question.query.filter(Question.category == category_id).all()
 
-            #print(search_category)
-
+            # create the results from the db search
             results = []
             for question in search_category:
                 results.append(
@@ -241,12 +234,7 @@ def create_app(test_config=None):
         quiz_category = body['quiz_category']['id']
         questions_category = Question.query.filter(Question.category == quiz_category)
 
-
-        print(body)
-        print(quiz_category)
-        print(body['quiz_category'])
-        
-
+        # create the questions from the selected category consult in the db
         questions=[]
         for question in questions_category:
             questions.append(question.format())
@@ -258,13 +246,12 @@ def create_app(test_config=None):
         print(currentQuestion['answer'])
         
 
-
         return jsonify({
             'success': True,
             'quizCategory': body['quiz_category'],
             'currentQuestion': currentQuestion,
             'previousQuestions': questions,
-            #'answer': currentQuestion
+            
         })
 
 
@@ -279,6 +266,7 @@ def create_app(test_config=None):
     one question at a time is displayed, the user is allowed to answer
     and shown whether they were correct or not.
     """
+    # Errors in the app 
 
     @app.errorhandler(400)
     def bad_request(error):

@@ -1,49 +1,223 @@
-# API Development and Documentation Final Project
+## DOCUMENTATION
 
-## Trivia App
+## UDACITRIVIA
 
-Udacity is invested in creating bonding experiences for its employees and students. A bunch of team members got the idea to hold trivia on a regular basis and created a webpage to manage the trivia app and play the game, but their API experience is limited and still needs to be built out.
+This is a project to let Udacity employers has a great internal cometition leisure tool.
+The code is written under the Pep-8 principles.
 
-That's where you come in! Help them finish the trivia app so they can start holding trivia and seeing who's the most knowledgeable of the bunch. The application must:
+## GETTING STARTED
 
-1. Display questions - both all questions and by category. Questions should show the question, category and difficulty rating by default and can show/hide the answer.
-2. Delete questions.
-3. Add questions and require that they include question and answer text.
-4. Search for questions based on a text query string.
-5. Play the quiz game, randomizing either all questions or within a specific category.
+The stack of the application is Flask for the backend and React for the frontend. The 
+database is Postgresql. The project was developed internally so the url is refering a 
+localhost owned by Udacity.
 
-Completing this trivia app will give you the ability to structure plan, implement, and test an API - skills essential for enabling your future applications to communicate with others.
 
-## Starting and Submitting the Project
+## API REFERENCE
 
-[Fork](https://help.github.com/en/articles/fork-a-repo) the project repository and [clone](https://help.github.com/en/articles/cloning-a-repository) your forked repository to your machine. Work on the project locally and make sure to push all your changes to the remote repository before submitting the link to your repository in the Classroom.
+## GET '/questions'
 
-## About the Stack
+Fetches a dictionary with all the questions from database.
+Request arguments: None
+There are three responses, first a value pair list of categories with the category id and the category name. The same for current category. The second is a dictionary
+with the questions in a value pair with the question, answer, category, difficulty and id.
 
-We started the full stack application for you. It is designed with some key functional areas:
+ "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
+  "current_category": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
+  "questions": [
+    {
+      "answer": "Tom Cruise",
+      "category": 5,
+      "difficulty": 4,
+      "id": 4,
+      "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+    },
+    {
+      "answer": "Maya Angelou",
+      "category": 4,
+      "difficulty": 2,
+      "id": 5,
+      "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+    },
 
-### Backend
+## GET '/categories'
 
-The [backend](./backend/README.md) directory contains a partially completed Flask and SQLAlchemy server. You will work primarily in `__init__.py` to define your endpoints and can reference models.py for DB and SQLAlchemy setup. These are the files you'd want to edit in the backend:
+Fetches a dictionary with the categories in a value - pair schema. 
+Request arguments: None.
+This categories display questions by category when selected.
 
-1. `backend/flaskr/__init__.py`
-2. `backend/test_flaskr.py`
+{
+  "categories": {
+    "1": "Science",
+    "2": "Art",
+    "3": "Geography",
+    "4": "History",
+    "5": "Entertainment",
+    "6": "Sports"
+  },
 
-> View the [Backend README](./backend/README.md) for more details.
+## DELETE '/questions/<int:question_id>'
 
-### Frontend
+Delete the question in database
+Request arguments: id of the questions (integer value)
+When clicked the trash it sends a delete to db. It response the id of the deleted question and when done it a true success.
 
-The [frontend](./frontend/README.md) directory contains a complete React frontend to consume the data from the Flask server. If you have prior experience building a frontend application, you should feel free to edit the endpoints as you see fit for the backend you design. If you do not have prior experience building a frontend application, you should read through the frontend code before starting and make notes regarding:
+{
+  "deleted": 6,
+  "success": true
+}
 
-1. What are the end points and HTTP methods the frontend is expecting to consume?
-2. How are the requests from the frontend formatted? Are they expecting certain parameters or payloads?
 
-Pay special attention to what data the frontend is expecting from each API response to help guide how you format your API. The places where you may change the frontend behavior, and where you should be looking for the above information, are marked with `TODO`. These are the files you'd want to edit in the frontend:
+## POST '/add'
+The form send the request to db. It is not allowed to send empty fields.
+Request arguments: None.
+The question is added at the end of the whole list.
 
-1. `frontend/src/components/QuestionView.js`
-2. `frontend/src/components/FormView.js`
-3. `frontend/src/components/QuizView.js`
+{
+    question: What's the name of spanisk King?
+    answer: Felipe VI 
+    difficulty: 3
+    category: 3
+}
 
-By making notes ahead of time, you will practice the core skill of being able to read and understand code and will have a simple plan to follow to build out the endpoints of your backend API.
+## POST '/questions'
+Using the search field, this action search for terms in question, it allows capitals or not.
+Request arguments: None
+It returns a list of questions where the search tearm appears. 
+The dictionary contains the total number of questions returned. It response too the current category of the questions searched
 
-> View the [Frontend README](./frontend/README.md) for more details.
+  "questions": [
+    {
+      "answer": "Brazil",
+      "category": 6,
+      "difficulty": 3,
+      "question": "Which is the only team to play in every soccer World Cup tournament?"
+    }
+  ],
+  "success": true,
+  "totalQuestions": 1
+}
+
+
+## GET '/categories/<int:category_id>/questions'
+
+It allows to filter the list of questions by category selected.
+Request arguments: category id (integer)
+The response is a list of dictionaries with each question.
+
+{
+  "currentCategory": null,
+  "questions": [
+    {
+      "answer": "Lake Victoria",
+      "category": 3,
+      "difficulty": 2,
+      "question": "What is the largest lake in Africa?"
+    },
+    {
+      "answer": "The Palace of Versailles",
+      "category": 3,
+      "difficulty": 3,
+      "question": "In which royal palace would you find the Hall of Mirrors?"
+    },
+    {
+      "answer": "Agra",
+      "category": 3,
+      "difficulty": 2,
+      "question": "The Taj Mahal is located in which Indian city?"
+    }
+  ],
+  "success": true,
+  "totalQuestions": 3
+
+
+## POST '/play'
+Allow to select a cateogry and get random questions of this category
+Request arguments: None
+When selected category it filters all the questions by this category. It shows a random question (current_question) for the list and you have to fit the answe. 
+Displays a message of error when fail and a success when the answer is correct. Clicking next question it show the next one (previousQuestions) in the list. If none, it 
+stays.
+
+{
+  "currentQuestion": {
+    "answer": "Brazil",
+    "category": 6,
+    "difficulty": 3,
+    "id": 10,
+    "question": "Which is the only team to play in every soccer World Cup tournament?"
+  },
+  "previousQuestions": [
+    {
+      "answer": "Brazil",
+      "category": 6,
+      "difficulty": 3,
+      "id": 10,
+      "question": "Which is the only team to play in every soccer World Cup tournament?"
+    },
+    {
+      "answer": "Uruguay",
+      "category": 6,
+      "difficulty": 4,
+      "id": 11,
+      "question": "Which country won the first ever soccer World Cup in 1930?"
+    }
+  ],
+  "quizCategory": {
+    "id": "6",
+    "type": "Sports"
+  },
+  "success": true
+}
+
+## DEPLOYEMENT
+
+## Frontend
+
+Install Node and NPM This project requires on Nodejs and Node Package Manager (NPM). If you haven't already installed Node on your local machine, see the instructions here: Before continuing, you must download and install Node (the download includes NPM) from Nodejs.com.
+Install project dependencies After confirming you have NPM installed, navigate to the frontend directory of the project and run.
+
+npm install
+npm start
+
+The frontend folders got public folder with images and media. And src folder where you can find the components and stylesheet.
+
+## Backend
+
+Need to install dependencies. Check for updated packages.
+
+pip install -r requirements.txt
+
+Primary dependencies: Flask, SQLAlchemy, Flask-CORS.
+
+To start the server, positioned in backend folder:
+
+export FLASK_APP=flaskr
+export FLASK_ENV=development
+flask run
+
+## Testing: You can test the app an any added route executing in backend folder:
+
+python3 test_flaskr.py 
+
+
+## AUTHORS
+
+Juanan Jiménez
+
+## ACKNOWLEDGEMENT
+
+All the work wasn't possible without the help of Udacity mentors: Ananta, Chirayu and Promise.
+
