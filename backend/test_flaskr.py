@@ -53,7 +53,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['categories'])
 
     def test_delete_questions(self):
-        res = self.client().delete('/questions/39')
+        res = self.client().delete('/questions/48')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -79,7 +79,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Method not allowed')
 
     def test_search_question(self):
-        res = self.client().post('/questions')
+        res = self.client().post('/questions', json={'searchTerm': 'world'})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -115,16 +115,13 @@ class TriviaTestCase(unittest.TestCase):
     
 
     def test_422_unprocessable(self):
-        res = self.client().delete('/questions/39')
+        res = self.client().delete('/questions/36')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Unprocessable')
 
-     
-
-        
        
 
 # Make the tests conveniently executable

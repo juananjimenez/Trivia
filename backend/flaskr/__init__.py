@@ -81,10 +81,14 @@ def create_app(test_config=None):
         #all_categories = [category.format() for category in categories]
         all_categories = {category.id: category.type for category in categories}
 
-        return jsonify({
-            'success': True,
-            'categories': all_categories
-        })
+        if categories is None:
+            abort(400)
+        else:
+
+            return jsonify({
+                'success': True,
+                'categories': all_categories
+            })
 
 
     """
@@ -124,21 +128,19 @@ def create_app(test_config=None):
         new_category = body.get('category', None)
         new_difficulty = body.get('difficulty', None)
 
-        try:
-            new_question = Question(
-                question = new_question, 
-                answer = new_answer, 
-                category = new_category, 
-                difficulty = new_difficulty)
+        new_question = Question(
+            question = new_question, 
+            answer = new_answer, 
+            category = new_category, 
+            difficulty = new_difficulty)
 
-            new_question.insert()
+        new_question.insert()
 
-            return jsonify({
-                'success': True,
-            
-                })
-        except:
-            abort(422)
+        return jsonify({
+            'success': True,
+        
+            })
+    
 
 
     """
@@ -198,27 +200,31 @@ def create_app(test_config=None):
     @app.route('/categories/<int:category_id>/questions', methods=['GET'])
     def question_by_category(category_id):
 
-        search_category = Question.query.filter(Question.category == category_id).all()
+        try:
 
-        #print(search_category)
+            search_category = Question.query.filter(Question.category == category_id).all()
 
-        results = []
-        for question in search_category:
-            results.append(
-            {
-                'question': question.question,
-                'answer': question.answer,
-                'difficulty': question.difficulty,
-                'category': question.category
-            }
-            )
+            #print(search_category)
 
-        return jsonify({
-        'success': True,
-        'questions': results,
-        'totalQuestions': len(results),
-        'currentCategory': None
-        })
+            results = []
+            for question in search_category:
+                results.append(
+                {
+                    'question': question.question,
+                    'answer': question.answer,
+                    'difficulty': question.difficulty,
+                    'category': question.category
+                }
+                )
+
+            return jsonify({
+            'success': True,
+            'questions': results,
+            'totalQuestions': len(results),
+            'currentCategory': None
+            })
+        except:
+            abort(400)
 
 
     """
@@ -229,8 +235,36 @@ def create_app(test_config=None):
     categories in the left column will cause only questions of that
     category to be shown.
     """
-    #@app.route('/play', methods=['POST'])
-    #def question_play():
+    @app.route('/play', methods=['POST'])
+    def question_play():
+        body = request.get_json()
+        quiz_category = body['quiz_category']['id']
+        questions_category = Question.query.filter(Question.category == quiz_category)
+
+
+        print(body)
+        print(quiz_category)
+        
+
+        questions=[]
+        for question in questions_category:
+            questions.append(question.format())
+
+        print(questions)
+        print(random.choice(questions))
+        previousQuestions = random.choice(questions)
+        print(previousQuestions['question'])
+        print(previousQuestions['answer'])
+        
+
+
+        return jsonify({
+            'success': True,
+            'quizQategory': quiz_category,
+            'currentQuestion': previousQuestions,
+            'previousQuestions': previousQuestions['question'],
+            'answer': previousQuestions['answer']
+        })
 
 
     """
@@ -267,7 +301,7 @@ def create_app(test_config=None):
             'success': False,
             'error': 405,
             'message': "Method not allowed"
-        })
+        }), 405
 
     @app.errorhandler(422)
     def unprocessable(error):
@@ -275,7 +309,7 @@ def create_app(test_config=None):
             'success': False,
             'error': 422,
             'message': "Unprocessable"
-        })
+        }), 422
     
     
     """
